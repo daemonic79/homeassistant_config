@@ -1,0 +1,5 @@
+  - platform: rflink
+    devices:
+      lightwaverf_e10101_1:
+        name: Lounge
+        type: dimmable

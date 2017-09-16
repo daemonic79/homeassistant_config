@@ -1,0 +1,36 @@
+- action:
+  - data:
+      entity_id: light.lounge
+      brightness_pct: 100
+    service: light.turn_on
+  alias: Lounge Sunset
+  id: '1497183664967'
+  trigger:
+  - entity_id: sun.sun
+    from: above_horizon
+    platform: state
+    to: below_horizon
+
+- action:
+  - data:
+      entity_id: light.lounge
+    service: light.turn_off
+  alias: Lounge Sunrise
+  id: '1497183664968'
+  trigger:
+  - entity_id: sun.sun
+    from: below_horizon
+    platform: state
+    to: above_horizon
+
+- alias: "Lounge Floor Animation Speed"
+  initial_state: True
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: input_slider.lounge_floor_animation_speed
+  action:
+    - service: mqtt.publish
+      data_template:
+        topic: "lounge/floor/command"
+        payload: '{"transition":{{ trigger.to_state.state | int }}}'

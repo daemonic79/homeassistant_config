@@ -1,0 +1,20 @@
+  - name: Home
+    latitude: !secret zone_home_latitude
+    longitude: !secret zone_home_longitude
+    radius: 50
+#  - name: Rob Work
+#    latitude: !secret zone_rob_work_latitude
+#    longitude: !secret zone_rob_work_longitude
+#    radius: 50
+  - name: Kirstine Work
+    latitude: !secret zone_kirstine_work_latitude
+    longitude: !secret zone_kirstine_work_longitude
+    radius: 50
+  - name: Parents
+    latitude: !secret zone_parents_latitude
+    longitude: !secret zone_parents_longitude
+    radius: 50
+  - name: GrandParents
+    latitude: !secret zone_grandparents_latitude
+    longitude: !secret zone_grandparents_longitude
+    radius: 50

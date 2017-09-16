@@ -1,0 +1,27 @@
+  - platform: rflink
+    devices:
+      lacrossev2_0a0e_temp:
+        name: Temperature
+        sensor_type: temperature
+        unit_of_measurement: °C
+      lacrossev2_0a0e_hum:
+        name: Humidity
+        sensor_type: humidity
+        unit_of_measurement: '%'
+#      lacrossev2_0a0e_raintot:
+      lacrossev2_0a0e_rain:
+        name: Total Rain
+        sensor_type: total_rain
+        unit_of_measurement: mm
+      lacrossev2_0a0e_winsp:
+        name: Wind Speed
+        sensor_type: windspeed
+        unit_of_measurement: km/h
+      lacrossev2_0a0e_wings:
+        name: Wind Gusts
+        sensor_type: windgusts
+        unit_of_measurement: km/h
+      lacrossev2_0a0e_windir:
+        name: Wind Direction
+        sensor_type: winddirection
+        unit_of_measurement: °

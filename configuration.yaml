@@ -1,0 +1,132 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret location_latitude
+  longitude: !secret location_longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret location_elevation
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: !secret location_time_zone
+  customize: !include customize.yaml
+
+# Enables the frontend
+frontend:
+  themes:
+    orange:
+      primary-color: orange
+
+# Enables configuration UI
+config:
+
+logger:
+  default: info
+  logs:
+    rflink: debug
+    homeassistant.components.rflink: debug
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_api_password
+  # Uncomment this if you are using SSL or running in Docker etc
+  #base_url: !secret http_base_url
+  #ip_ban_enabled: true
+  #login_attempts_threshold: 5
+  #ssl_certificate: !secret http_sslcert
+  #ssl_key: !secret http_sslkey
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+recorder:
+  purge_days: 14
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+# Text to speech
+tts:
+  platform: google
+
+emulated_hue:
+  type: google_home # google_home|alexa
+  host_ip: !secret emulated_hue_host_ip
+  listen_port: 80 # 80:8300
+  expose_by_default: true
+  exposed_domains:
+    - light
+    - switch
+
+device_tracker:
+  - platform: gpslogger
+
+rflink:
+  port: /dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0
+  wait_for_ack: false
+  ignore_devices:
+    - ab400d_*
+    - aster_*
+    - bft_*
+    - byron_*
+    - deltronic_*
+    - doorbell_*
+    - eurodomest_*
+    - mertik_gv60_*
+    - rts_*
+    - silvercrestdb_00000000_1
+    - trc02rgb_ffffff_ff
+    - tristate_86aaa0_3
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+group: !include_dir_merge_named groups
+light: !include_dir_merge_list lights
+media_player: !include_dir_merge_list media_player
+scene: !include_dir_merge_list scenes
+sensor: !include_dir_merge_list sensors
+switch: !include_dir_merge_list switches
+zone: !include_dir_merge_list zones
+
+#hdmi_cec:
+##  platform: media_player
+#  devices:
+##    0: TV
+#    1: SkyQ
+#    2: Playstation 4
+#    4: Raspberry Pi
+##    TV: 0.0.0.0
+##    SkyQ: 1.0.0.0
+##    PlayStation4: 2.0.0.0
+##    CECTester: 4.0.0.0
+
+mqtt:
+  broker: !secret mqtt_broker
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+
+input_slider:
+  lounge_floor_animation_speed:
+    name: Lounge Floor Animation Speed
+    initial: 150
+    min: 1
+    max: 150
+    step: 10
+
+weather:
+  - platform: openweathermap
+    api_key: !secret sensor_openweathermap_api_key

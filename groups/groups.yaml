@@ -1,0 +1,77 @@
+family_group:
+  name: Family
+  icon: mdi:human-male-female
+  view: no
+  entities:
+    - device_tracker.zx1g522rld
+
+lounge_lights_group:
+  name: Lounge Lights
+  view: no
+  entities:
+    - light.lounge
+    - light.lounge_floor
+
+sun_group:
+  name: Sun
+  view: no
+  entities:
+    - sun.sun
+
+season_group:
+  name: Season
+  view: no
+  entities:
+    - sensor.season
+
+yr_group:
+  name: YR.NO
+  view: no
+  entities:
+    - sensor.yr_symbol
+    - sensor.yr_temperature
+    - sensor.yr_wind_direction
+    - sensor.yr_wind_speed
+
+owm_group:
+  name: OpenWeatherMap
+  view: no
+  entities:
+    - sensor.owm_condition
+    - sensor.owm_humidity
+    - sensor.owm_temperature
+    - sensor.owm_wind_bearing
+    - sensor.owm_wind_speed
+    - sensor.owm_forecast
+
+metoffice_group:
+  name: Met Office
+  view: no
+  entities:
+    - sensor.met_office_feels_like_temperature
+    - sensor.met_office_humidity
+    - sensor.met_office_probability_of_precipitation
+    - sensor.met_office_temperature
+    - sensor.met_office_uv
+    - sensor.met_office_visibility
+    - sensor.met_office_weather
+    - sensor.met_office_wind_direction
+    - sensor.met_office_wind_gust
+    - sensor.met_office_wind_speed
+
+weatherstation_group:
+  name: Weather Station
+  view: no
+  entities:
+    - sensor.temperature
+    - sensor.humidity
+    - sensor.total_rain
+    - sensor.wind_direction
+    - sensor.wind_gusts
+    - sensor.wind_speed
+
+movies_group:
+  name: Movies
+  entities:
+    - scene.movies
+    - switch.movies

@@ -1,0 +1,14 @@
+# Seems to be broken atm - https://community.home-assistant.io/t/metoffice-integration/15537
+  - platform: metoffice
+    api_key: !secret sensor_metoffice_api_key
+    monitored_conditions:
+      - weather
+      - temperature
+      - feels_like_temperature
+      - wind_speed
+      - wind_direction
+      - wind_gust
+      - visibility
+      - uv
+      - precipitation
+      - humidity

@@ -1,0 +1,45 @@
+#default_view:
+#  name: Home
+#  icon: mdi:home
+#  view: yes
+
+family_view:
+  name: Family
+  icon: mdi:human-male-female
+  view: yes
+  entities:
+    - group.family_group
+
+lighting_view:
+  name: Lighting
+  icon: mdi:lightbulb
+  view: yes
+  entities:
+    - group.lounge_lights_group
+#    - scene.movies
+    - group.movies_group
+
+media_view:
+  name: Media
+  icon: mdi:video
+  view: yes
+  entities:
+    - media_player.home
+    - media_player.kitchen_home
+    - media_player.living_room_home
+    - media_player.lounge_chromecast
+#    - scene.movies
+    - group.movies_group
+
+weather_view:
+  name: Weather
+  icon: mdi:weather-snowy-rainy
+  view: yes
+  entities:
+    - group.sun_group
+    - group.season_group
+    - group.yr_group
+    - group.owm_group
+    - group.metoffice_group
+    - group.weatherstation_group
+    - weather.openweathermap

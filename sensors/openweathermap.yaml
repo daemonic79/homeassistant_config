@@ -1,0 +1,13 @@
+  - platform: openweathermap
+    api_key: !secret sensor_openweathermap_api_key
+    forecast: 1
+    monitored_conditions:
+      - weather # A human-readable text summary.
+      - temperature # The current temperature.
+      - wind_speed # The wind speed.
+      - wind_bearing # The wind bearing.
+      - humidity # The relative humidity.
+#      - pressure # The sea-level air pressure in millibars.
+#      - clouds # Description about cloud coverage.
+#      - rain # The rain volume.
+#      - snow # The snow volume
