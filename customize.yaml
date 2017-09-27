@@ -17,3 +17,20 @@ sensor.yr_wind_speed:
   icon: mdi:weather-windy
 sensor.yr_wind_direction:
   icon: mdi:compass
+sensor.owm_humidity:
+  icon: mdi:water-percent
+sensor.met_office_humidity:
+  icon: mdi:water-percent
+sensor.met_office_wind_direction:
+  icon: mdi:compass
+sensor.met_office_wind_speed:
+  icon: mdi:weather-windy
+sensor.owm_forecast:
+  icon: mdi:weather-snowy-rainy
+sensor.met_office_weather:
+  icon: mdi:weather-snowy-rainy
+sensor.met_office_wind_gust:
+  icon: mdi:weather-windy
+sensor.yr_humidity:
+  icon: mdi:water-percent
+group.humidity_group: {}

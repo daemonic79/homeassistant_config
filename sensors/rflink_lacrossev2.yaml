@@ -8,8 +8,7 @@
         name: Humidity
         sensor_type: humidity
         unit_of_measurement: '%'
-#      lacrossev2_0a0e_raintot:
-      lacrossev2_0a0e_rain:
+      lacrossev2_0a0e_raintot:
         name: Total Rain
         sensor_type: total_rain
         unit_of_measurement: mm

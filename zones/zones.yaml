@@ -1,6 +1,10 @@
-  - name: Home
-    latitude: !secret zone_home_latitude
-    longitude: !secret zone_home_longitude
+  - name: Current Home
+    latitude: !secret zone_current_home_latitude
+    longitude: !secret zone_current_home_longitude
+    radius: 50
+  - name: New Home
+    latitude: !secret zone_new_home_latitude
+    longitude: !secret zone_new_home_longitude
     radius: 50
 #  - name: Rob Work
 #    latitude: !secret zone_rob_work_latitude

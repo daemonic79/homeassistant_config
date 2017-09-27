@@ -2,11 +2,11 @@
     monitored_conditions:
       - temperature
       - symbol
-#      - precipitation
+      - precipitation
       - windSpeed
 #      - pressure
       - windDirection
-#      - humidity
+      - humidity
 #      - fog
 #      - cloudiness
 #      - lowClouds

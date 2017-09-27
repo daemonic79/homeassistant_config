@@ -38,8 +38,16 @@ weather_view:
   entities:
     - group.sun_group
     - group.season_group
-    - group.yr_group
-    - group.owm_group
-    - group.metoffice_group
+    - group.forecast_group
+    - group.temperature_group
+    - group.humidity_group
+    - group.rain_group
+    - group.wind_group
     - group.weatherstation_group
+    - group.darksky_group
+    - group.metoffice_group
+    - group.owm_group
+    - group.yr_group
+    - group.temperature_group
+    - weather.met_office_epping
     - weather.openweathermap

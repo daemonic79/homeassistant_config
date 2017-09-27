@@ -8,7 +8,7 @@
       - wind_speed
       - wind_direction
       - wind_gust
-      - visibility
+#      - visibility
       - uv
       - precipitation
       - humidity
