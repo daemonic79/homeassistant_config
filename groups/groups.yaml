@@ -60,6 +60,7 @@ owm_group:
 #    - sensor.owm_wind_bearing
 #    - sensor.owm_wind_speed
 #    - sensor.owm_forecast
+#    - sensor.owm_rain
 
 yr_group:
   name: YR.NO
@@ -113,6 +114,7 @@ rain_group:
     - sensor.total_rain
     - sensor.dark_sky_precip_probability
     - sensor.met_office_probability_of_precipitation
+    - sensor.owm_rain
     - sensor.yr_precipitation
 
 humidity_group:

@@ -1,2 +1,8 @@
   - platform: cast
-    name: kitchen_home
+#    name: home
+#  - platform: cast
+#    name: kitchen_home
+#  - platform: cast
+#    name: living_room_home
+#  - platform: cast
+#    name: lounge_chromecast

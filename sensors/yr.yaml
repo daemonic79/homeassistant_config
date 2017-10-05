@@ -1,15 +1,15 @@
   - platform: yr
     monitored_conditions:
-      - temperature
-      - symbol
-      - precipitation
-      - windSpeed
-#      - pressure
-      - windDirection
-      - humidity
-#      - fog
-#      - cloudiness
-#      - lowClouds
-#      - mediumClouds
-#      - highClouds
-#      - dewpointTemperature
+      - symbol # A symbol for the current weather.
+      - temperature # The current temperature.
+      - humidity # The relative humidity.
+#      - fog # Fog.
+#      - pressure # The sea-level air pressure in millibars.
+      - precipitation # The precipitation.
+#      - dewpointTemperature # The dew point temperature.
+      - windSpeed # The wind speed.
+      - windDirection # Where the wind is coming from in degrees, with true north at 0° and progressing clockwise.
+#      - cloudiness # The cloudiness.
+#      - lowClouds # Low cloud level.
+#      - mediumClouds # Medium cloud level.
+#      - highClouds # High cloud level.

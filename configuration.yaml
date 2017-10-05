@@ -118,7 +118,35 @@ mqtt:
   port: 1883
   username: !secret mqtt_username
   password: !secret mqtt_password
+  discovery: true
+  discovery_prefix: homeassistant
 
+weather:
+  - platform: openweathermap
+    api_key: !secret sensor_openweathermap_api_key
+  - platform: metoffice
+    api_key: !secret sensor_metoffice_api_key
+
+#input_text:
+#  haswitchplate_pagebutton1_label:
+#    name: HASP Page Button 1 Label
+#    icon: mdi:book-open-page-variant
+#  haswitchplate_pagebutton2_label:
+#    name: HASP Page Button 2 Label
+#    icon: mdi:book-open-page-variant
+#  haswitchplate_pagebutton3_label:
+#    name: HASP Page Button 3 Label
+#    icon: mdi:book-open-page-variant
+
+#1 - Init
+#2 - Home
+#3 - 4 Buttons
+#4 - 3 Sliders
+#5 - 3 Sliders
+#6 - 8 Buttons
+#7 - 12 Buttons (KeyPad)
+#8 - Media
+#9 - Graph
 input_slider:
   lounge_floor_animation_speed:
     name: Lounge Floor Animation Speed
@@ -126,9 +154,27 @@ input_slider:
     min: 1
     max: 150
     step: 10
-
-weather:
-  - platform: openweathermap
-    api_key: !secret sensor_openweathermap_api_key
-  - platform: metoffice
-    api_key: !secret sensor_metoffice_api_key
+  haswitchplate_pagebutton1_page:
+    name: HASP Page Button 1 Page
+    icon: mdi:format-list-numbers
+    min: 0
+    max: 9
+    step: 1
+  haswitchplate_pagebutton2_page:
+    name: HASP Page Button 2 Page
+    icon: mdi:format-list-numbers
+    min: 0
+    max: 9
+    step: 1
+  haswitchplate_pagebutton3_page:
+    name: HASP Page Button 3 Page
+    icon: mdi:format-list-numbers
+    min: 0
+    max: 9
+    step: 1
+  haswitchplate_active_page:
+    name: HASP Active Page
+    icon: mdi:format-list-numbers
+    min: 0
+    max: 9
+    step: 1

@@ -10,7 +10,6 @@
     from: above_horizon
     platform: state
     to: below_horizon
-
 - action:
   - data:
       entity_id: light.lounge
@@ -22,15 +21,827 @@
     from: below_horizon
     platform: state
     to: above_horizon
-
-- alias: "Lounge Floor Animation Speed"
-  initial_state: True
-  hide_entity: False
+- alias: Lounge Floor Animation Speed
+  initial_state: true
+  hide_entity: false
   trigger:
-    - platform: state
-      entity_id: input_slider.lounge_floor_animation_speed
+  - platform: state
+    entity_id: input_slider.lounge_floor_animation_speed
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: lounge/floor/command
+      payload: '{"transition":{{ trigger.to_state.state | int }}}'
+
+#HASwitchPlatePages.yaml
+##############################################################################
+# Automations for handling the 3 page select buttons at the bottom of each
+# page on the panel.  This example should be ready to use, simply run a
+# Case Sensitive search/replace on "HASwitchPlate" with your node name
+##############################################################################
+# Initialize device on connect
+- alias: HASwitchPlate_Connected
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/page'
+      payload_template: '{{states.input_slider.haswitchplate_active_page.state|int}}'
+##############################################################################
+# select haswitchplate_pagebutton1_page in response to page button 1
+- alias: HASwitchPlate_PageButton1_Action
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/+'
+    payload: 'ON'
+  condition: 
+    condition: template
+    value_template: '{{ trigger.topic.split("/")[-1].split("].b[")[1].strip("]")|int == 1 }}'
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/page'
+      payload_template: "{{states.input_slider.haswitchplate_pagebutton1_page.state|int}}"
+##############################################################################
+# select haswitchplate_pagebutton2_page in response to page button 2
+- alias: HASwitchPlate_PageButton2_Action
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/+'
+    payload: 'ON'
+  condition: 
+    condition: template
+    value_template: '{{ trigger.topic.split("/")[-1].split("].b[")[1].strip("]")|int == 2 }}'
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/page'
+      payload_template: "{{states.input_slider.haswitchplate_pagebutton2_page.state|int}}"
+##############################################################################
+# select haswitchplate_pagebutton3_page in response to page button 3
+- alias: HASwitchPlate_PageButton3_Action
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/+'
+    payload: 'ON'
+  condition: 
+    condition: template
+    value_template: '{{ trigger.topic.split("/")[-1].split("].b[")[1].strip("]")|int == 3 }}'
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/page'
+      payload_template: "{{states.input_slider.haswitchplate_pagebutton3_page.state|int}}"
+
+##############################################################################
+# Update haswitchplate_active_page when changed at the panel
+- alias: HASwitchPlate_Panel_Page_Changed
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/page'
+  action:
+  - service: automation.turn_off
+    entity_id: automation.haswitchplate_active_page_slider_changed
+  - service: input_slider.select_value
+    data_template:
+      entity_id: input_slider.haswitchplate_active_page
+      value: '{{ trigger.payload }}'
+  - service: input_slider.select_value
+    data_template:
+      entity_id: input_slider.haswitchplate_pagebutton3_page
+#      value: '{% if states.input_slider.haswitchplate_active_page.state|int in [2, 4] -%}4{% else %}6{%- endif %}'
+      value: >-
+        {% if states.input_slider.haswitchplate_active_page.state|int in [2, 3, 4] %}
+          4
+        {% else %}
+          6
+        {% endif %}
+  - service: input_slider.select_value
+    data_template:
+      entity_id: input_slider.haswitchplate_pagebutton1_page
+      value: >-
+        {% if states.input_slider.haswitchplate_active_page.state|int in [2] %}
+          3
+        {% else %}
+          2
+        {% endif %}
+#    - service: mqtt.publish
+#    data_template: >
+#      {% if is_state('input_slider.haswitchplate_active_page', '2') %}
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[3].txt'
+##        payload_template: '"{{states.input_text.haswitchplate_pagebutton3_label.state}}"'
+#        payload_template: '"Dimmer"'
+#      {% else %}
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[3].txt'
+##        payload_template: '"{{states.input_text.haswitchplate_pagebutton3_label.state}}"'
+#        payload_template: '"Other"'
+#      {% endif %}
+  - service: automation.turn_on
+    entity_id: automation.haswitchplate_active_page_slider_changed
+##############################################################################
+# Change page at panel when haswitchplate_active_page updated
+- alias: HASwitchPlate_Active_Page_Slider_Changed
+  trigger:
+    platform: state
+    entity_id: input_slider.haswitchplate_active_page
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/page'
+      payload: '{{ states.input_slider.haswitchplate_active_page.state | int }}'
+
+##############################################################################
+# Set page button text across all pages to the value selected in the interface
+# set page button text on each page to haswitchplate_pagebutton1_label
+- alias: HASwitchPlate_PageButton1_Text
+  trigger:
+#  - platform: state
+#    entity_id: input_text.haswitchplate_pagebutton1_label
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[1].txt'
+      payload_template: '"1/2"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[1].txt'
+      payload_template: '"2/2"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[1].txt'
+      payload_template: '"Lights"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[1].txt'
+      payload_template: '"Lights"'
+# set page button text on each page to haswitchplate_pagebutton2_label
+- alias: HASwitchPlate_PageButton2_Text
+  trigger:
+#  - platform: state
+#    entity_id: input_text.haswitchplate_pagebutton2_label
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[2].txt'
+      payload_template: '"Home"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[2].txt'
+      payload_template: '"Home"'
+# set page button text on each page to haswitchplate_pagebutton3_label
+- alias: HASwitchPlate_PageButton3_Text
+  trigger:
+#  - platform: state
+#    entity_id: input_text.haswitchplate_pagebutton3_label
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[3].txt'
+      payload_template: '"Other"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[3].txt'
+      payload_template: '"Dimmer"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[3].txt'
+      payload_template: '"Dimmer"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[3].txt'
+      payload_template: '"Dimmer"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[3].txt'
+      payload_template: '"Other"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[3].txt'
+      payload_template: '"Other"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[3].txt'
+      payload_template: '"Other"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[3].txt'
+      payload_template: '"Other"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[3].txt'
+      payload_template: '"Other"'
+
+##############################################################################
+# Set page button colors across selected pages to show active page button
+# First we'll reset all page buttons, then overwrite our three pages with 
+# a highlighted page button to show the selection. 
+# set page button 1 colors on page 
+- alias: HASwitchPlate_PageButton_Colors
+  trigger:
+  - platform: state
+    entity_id: input_slider.haswitchplate_pagebutton1_page
+  - platform: state
+    entity_id: input_slider.haswitchplate_pagebutton2_page
+  - platform: state
+    entity_id: input_slider.haswitchplate_pagebutton3_page
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[3].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[5].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[6].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[7].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[8].b[3].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[1].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[1].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[2].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[2].pco'
+      payload: '65535'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[3].bco'
+      payload: '25388'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[9].b[3].pco'
+      payload: '65535'
+# now write out the highlight colors for our 3 selected pages
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton1_page.state|int}}].b[1].bco'
+#      payload: '65535'
+      payload: '64512'
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton1_page.state|int}}].b[1].pco'
+      payload: '0'
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton2_page.state|int}}].b[2].bco'
+#      payload: '65535'
+      payload: '64512'
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton2_page.state|int}}].b[2].pco'
+      payload: '0'
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton3_page.state|int}}].b[3].bco'
+#      payload: '65535'
+      payload: '64512'
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_pagebutton3_page.state|int}}].b[3].pco'
+      payload: '0'
+#  - service: mqtt.publish
+#    data_template: >
+##      {% if ((states.input_slider.haswitchplate_active_page.state|int in [2] and states.input_slider.haswitchplate_pagebutton1_page.state|int in [3]) or (states.input_slider.haswitchplate_active_page.state|int in [3] and states.input_slider.haswitchplate_pagebutton1_page.state|int in [2]) %}
+#      {% if states.input_slider.haswitchplate_active_page.state|int in [2, 3] %}
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[{{states.input_slider.haswitchplate_active_page.state|int}}].b[1].bco'
+##        payload: '65535'
+#        payload: '64512'
+#      {% endif %}
+
+#HASwitchPlateWeather.yaml
+- alias: HASwitchPlate_Weather
+  trigger:
+  - platform: state
+#    entity_id: sensor.met_office_temperature
+    entity_id: sensor.dark_sky_temperature
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[6].font'
+      payload: '3'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[6].txt'
+#      payload_template: '"{{states.sensor.met_office_temperature.state}}C"'
+      payload_template: '"{{states.sensor.dark_sky_temperature.state}}C"'
+      retain: true
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[7].font'
+#      payload_template: '{% if states.sensor.met_office_weather.state|length <= 6 -%}3{% elif (states.sensor.met_office_weather.state|length > 6) and (states.sensor.met_office_weather.state|length <= 10) %}2{% elif (states.sensor.met_office_weather.state|length > 10) and (states.sensor.met_office_weather.state|length <= 15) %}1{% else %}0{%- endif %}'
+      payload_template: '{% if states.sensor.dark_sky_summary.state|length <= 6 -%}3{% elif (states.sensor.dark_sky_summary.state|length > 6) and (states.sensor.dark_sky_summary.state|length <= 10) %}2{% elif (states.sensor.dark_sky_summary.state|length > 10) and (states.sensor.dark_sky_summary.state|length <= 15) %}1{% else %}0{%- endif %}'
+      retain: true
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[7].txt'
+#      payload_template: '"{{states.sensor.met_office_weather.state|wordwrap(20, wrapstring="\\r")}}"'
+      payload_template: '"{{states.sensor.dark_sky_summary.state|wordwrap(20, wrapstring="\\r")}}"'
+      retain: true
+
+#HASwitchPlateClock.yaml
+- alias: HASwitchPlate_Clock
+  trigger:
+    platform: time
+    # Matches every minute
+    seconds: 00
+  condition:
+  - condition: state
+    entity_id: 'binary_sensor.haswitchplate'
+    state: 'on'
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[4].txt'
+      payload_template: "\"{{now().strftime('%H:%M')}}\""
+      retain: true
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[5].txt'
+      payload_template: "\"{{now().strftime('%A')}}\\r{{now().strftime('%B %-d')}}\""
+      retain: true
+- alias: HASwitchPlate_Clock_Init
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[4].font'
+      payload: '3'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[1].b[5].font'
+      payload: '1'
+
+#HASwitchPlateScenes.yaml
+- alias: HASwitchPlate_Buttons_Init
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].font'
+      payload: '2'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].txt'
+      payload: '"Lounge"'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[5].font'
+      payload: '2'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[5].txt'
+      payload: '""'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[6].font'
+      payload: '2'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[6].txt'
+      payload: '""'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[7].font'
+      payload: '2'
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[7].txt'
+      payload: '""'
+- alias: HASwitchPlate_Button_2_4
+  trigger:
+    platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[2].b[4]'
+    payload: 'ON'
+  action:
+    service_template: >
+      {% if is_state('light.lounge', 'on') %}
+        light.turn_off
+      {% else %}
+        light.turn_on
+      {% endif %}
+    entity_id: light.lounge
+#- alias: HASwitchPlate_Button_2_5
+#  trigger:
+#    platform: mqtt
+#    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[2].b[5]'
+#    payload: 'ON'
+#  action:
+#    service: scene.turn_on
+#    entity_id: scene.daylight
+#- alias: HASwitchPlate_Button_2_6
+#  trigger:
+#    platform: mqtt
+#    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[2].b[6]'
+#    payload: 'ON'
+#  action:
+#    service: scene.turn_on
+#    entity_id: scene.night
+#- alias: HASwitchPlate_Button_2_7
+#  trigger:
+#    platform: mqtt
+#    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[2].b[7]'
+#    payload: 'ON'
+#  action:
+#    service: scene.turn_on
+#    entity_id: scene.lights_off
+
+#HASwitchPlateDimmers.yaml
+- alias: HASwitchPlate_Dimmers_Init
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/binary_sensor/HASwitchPlate/state'
+    payload: 'ON'
+  - platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].txt'
+      payload: '"Lounge"'
+#  - service: mqtt.publish
+#    data:
+#      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[5].txt'
+#      payload: '"Light 2"'
+#  - service: mqtt.publish
+#    data:
+#      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[6].txt'
+#      payload: '"Light 3"'
+- alias: HASwitchPlate_Dimmer_4_7_Hass
+  trigger:
+  - platform: mqtt
+    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[4].b[7].val'
+  action:
+  - service: light.turn_on
+    data_template:
+      entity_id: light.lounge
+      brightness: '{{ trigger.payload }}'
+- alias: HASwitchPlate_Dimmer_4_7_HASP
+  trigger:
+  - platform: state
+    entity_id: light.lounge
+  action:
+  - service: mqtt.publish
+    data_template:
+      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[7].val'
+      payload_template: '{{states.light.lounge.attributes.brightness|default(0)|int}}'
+#- alias: HASwitchPlate_Dimmer_4_8_Hass
+#  trigger:
+#  - platform: mqtt
+#    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[4].b[8].val'
+#  action:
+#  - service: light.turn_on
+#    data_template:
+#      entity_id: light.light_2
+#      brightness: '{{ trigger.payload }}'
+#- alias: HASwitchPlate_Dimmer_4_8_HASP
+#  trigger:
+#  - platform: state
+#    entity_id: light.light_2
+#  action:
+#  - service: mqtt.publish
+#    data_template:
+#      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[8].val'
+#      payload_template: '{{states.light.light_2.attributes.brightness|default(0)|int}}'
+#- alias: HASwitchPlate_Dimmer_4_9_Hass
+#  trigger:
+#  - platform: mqtt
+#    topic: 'homeassistant/haswitchplate/HASwitchPlate/state/p[4].b[9].val'
+#  action:
+#  - service: light.turn_on
+#    data_template:
+#      entity_id: light.light_3
+#      brightness: '{{ trigger.payload }}'
+#- alias: HASwitchPlate_Dimmer_4_9_HASP
+#  trigger:
+#  - platform: state
+#    entity_id: light.light_3
+#  action:
+#  - service: mqtt.publish
+#    data_template:
+#      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[9].val'
+#      payload_template: '{{states.light.light_3.attributes.brightness|default(0)|int}}'
+
+- alias: Lounge_On
+  trigger:
+    entity_id: light.lounge
+    platform: state
+    to: 'on'
   action:
     - service: mqtt.publish
-      data_template:
-        topic: "lounge/floor/command"
-        payload: '{"transition":{{ trigger.to_state.state | int }}}'
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
+#        payload: '25388'
+        payload: '64512'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
+        payload: '65535'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
+#        payload: '25388'
+        payload: '64512'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
+        payload: '65535'
+- alias: Lounge_Off
+  trigger:
+    entity_id: light.lounge
+    platform: state
+    to: 'off'
+  action:
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
+        payload: '65535'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
+        payload: '0'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
+        payload: '65535'
+    - service: mqtt.publish
+      data:
+        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
+        payload: '0'

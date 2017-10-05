@@ -9,5 +9,5 @@
       - humidity # The relative humidity.
 #      - pressure # The sea-level air pressure in millibars.
 #      - clouds # Description about cloud coverage.
-#      - rain # The rain volume.
+      - rain # The rain volume.
 #      - snow # The snow volume
