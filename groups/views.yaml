@@ -24,10 +24,14 @@ media_view:
   icon: mdi:video
   view: yes
   entities:
-    - media_player.home
+    - media_player.whole_house
+    - media_player.downstairs
+    - media_player.upstairs
     - media_player.kitchen_home
-    - media_player.living_room_home
+    - media_player.lounge_home
     - media_player.lounge_chromecast
+    - media_player.office_mini
+    - media_player.bedroom_mini
 #    - scene.movies
     - group.movies_group
 

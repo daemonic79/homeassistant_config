@@ -26,12 +26,42 @@
   hide_entity: false
   trigger:
   - platform: state
-    entity_id: input_slider.lounge_floor_animation_speed
+    entity_id: input_number.lounge_floor_animation_speed
   action:
   - service: mqtt.publish
     data_template:
       topic: lounge/floor/command
       payload: '{"transition":{{ trigger.to_state.state | int }}}'
+- alias: Rob Home
+  initial_state: true
+  hide_entity: false
+  trigger:
+  - platform: state
+    entity_id: device_tracker.rob_nexus_6
+    from: "not_home"
+    to: "home"
+  action:
+    - service: tts.google_say
+      entity_id:
+        - media_player.kitchen_home
+        - media_player.office_mini
+      data_template:
+        message: Welcome home Rob
+- alias: Rob Away
+  initial_state: true
+  hide_entity: false
+  trigger:
+  - platform: state
+    entity_id: device_tracker.rob_nexus_6
+    from: "home"
+    to: "not_home"
+  action:
+    - service: tts.google_say
+      entity_id:
+        - media_player.kitchen_home
+        - media_player.office_mini
+      data_template:
+        message: Rob has left the building
 
 #HASwitchPlatePages.yaml
 ##############################################################################

@@ -3,7 +3,8 @@ family_group:
   icon: mdi:human-male-female
   view: no
   entities:
-    - device_tracker.zx1g522rld
+    - device_tracker.rob_nexus_6
+    - device_tracker.kirst_nexus_6p
 
 lounge_lights_group:
   name: Lounge Lights

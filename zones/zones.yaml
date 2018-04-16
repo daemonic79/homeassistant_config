@@ -1,16 +1,16 @@
-  - name: Current Home
-    latitude: !secret zone_current_home_latitude
-    longitude: !secret zone_current_home_longitude
+  - name: Old_Home
+    latitude: !secret zone_old_home_latitude
+    longitude: !secret zone_old_home_longitude
     radius: 50
-  - name: New Home
-    latitude: !secret zone_new_home_latitude
-    longitude: !secret zone_new_home_longitude
+  - name: Home
+    latitude: !secret zone_home_latitude
+    longitude: !secret zone_home_longitude
     radius: 50
 #  - name: Rob Work
 #    latitude: !secret zone_rob_work_latitude
 #    longitude: !secret zone_rob_work_longitude
 #    radius: 50
-  - name: Kirstine Work
+  - name: Kirst_Work
     latitude: !secret zone_kirstine_work_latitude
     longitude: !secret zone_kirstine_work_longitude
     radius: 50
@@ -21,4 +21,28 @@
   - name: GrandParents
     latitude: !secret zone_grandparents_latitude
     longitude: !secret zone_grandparents_longitude
+    radius: 50
+  - name: Jon_Sam
+    latitude: !secret zone_jonsam_latitude
+    longitude: !secret zone_jonsam_longitude
+    radius: 50
+  - name: Michael
+    latitude: !secret zone_michael_latitude
+    longitude: !secret zone_michael_longitude
+    radius: 50
+  - name: Paul_Fiona
+    latitude: !secret zone_paulfiona_latitude
+    longitude: !secret zone_paulfiona_longitude
+    radius: 50
+  - name: JLamb
+    latitude: !secret zone_jlamb_latitude
+    longitude: !secret zone_jlamb_longitude
+    radius: 50
+  - name: Telehouse
+    latitude: !secret zone_telehouse_latitude
+    longitude: !secret zone_telehouse_longitude
+    radius: 50
+  - name: ChunkyChips
+    latitude: !secret zone_chunkychips_latitude
+    longitude: !secret zone_chunkychips_longitude
     radius: 50

@@ -1,0 +1,8 @@
+  - platform: skyq
+    name: Sky Q Lounge
+    host: 10.10.10.57
+    xmltv_feed_url: http://www.xmltv.co.uk/feed/6145
+  - platform: skyq
+    name: Sky Q Bedroom
+    host: 10.10.10.58
+    xmltv_feed_url: http://www.xmltv.co.uk/feed/6145
