@@ -1,5 +1,5 @@
-  - name: Movies
-    entities:
-      light.lounge:
-        state: on
-        brightness: 20
+#  - name: Movies
+#    entities:
+#      light.lounge:
+#        state: on
+#        brightness: 20

@@ -15,9 +15,9 @@ lighting_view:
   icon: mdi:lightbulb
   view: yes
   entities:
-    - group.lounge_lights_group
+#    - group.lounge_lights_group
 #    - scene.movies
-    - group.movies_group
+#    - group.movies_group
 
 media_view:
   name: Media
@@ -33,7 +33,7 @@ media_view:
     - media_player.office_mini
     - media_player.bedroom_mini
 #    - scene.movies
-    - group.movies_group
+#    - group.movies_group
 
 weather_view:
   name: Weather

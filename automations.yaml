@@ -1,37 +1,37 @@
-- action:
-  - data:
-      entity_id: light.lounge
-      brightness_pct: 100
-    service: light.turn_on
-  alias: Lounge Sunset
-  id: '1497183664967'
-  trigger:
-  - entity_id: sun.sun
-    from: above_horizon
-    platform: state
-    to: below_horizon
-- action:
-  - data:
-      entity_id: light.lounge
-    service: light.turn_off
-  alias: Lounge Sunrise
-  id: '1497183664968'
-  trigger:
-  - entity_id: sun.sun
-    from: below_horizon
-    platform: state
-    to: above_horizon
-- alias: Lounge Floor Animation Speed
-  initial_state: true
-  hide_entity: false
-  trigger:
-  - platform: state
-    entity_id: input_number.lounge_floor_animation_speed
-  action:
-  - service: mqtt.publish
-    data_template:
-      topic: lounge/floor/command
-      payload: '{"transition":{{ trigger.to_state.state | int }}}'
+#- action:
+#  - data:
+#      entity_id: light.lounge
+#      brightness_pct: 100
+#    service: light.turn_on
+#  alias: Lounge Sunset
+#  id: '1497183664967'
+#  trigger:
+#  - entity_id: sun.sun
+#    from: above_horizon
+#    platform: state
+#    to: below_horizon
+#- action:
+#  - data:
+#      entity_id: light.lounge
+#    service: light.turn_off
+#  alias: Lounge Sunrise
+#  id: '1497183664968'
+#  trigger:
+#  - entity_id: sun.sun
+#    from: below_horizon
+#    platform: state
+#    to: above_horizon
+#- alias: Lounge Floor Animation Speed
+#  initial_state: true
+#  hide_entity: false
+#  trigger:
+#  - platform: state
+#    entity_id: input_number.lounge_floor_animation_speed
+#  action:
+#  - service: mqtt.publish
+#    data_template:
+#      topic: lounge/floor/command
+#      payload: '{"transition":{{ trigger.to_state.state | int }}}'
 - alias: Rob Home
   initial_state: true
   hide_entity: false
@@ -829,49 +829,49 @@
 #      topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[9].val'
 #      payload_template: '{{states.light.light_3.attributes.brightness|default(0)|int}}'
 
-- alias: Lounge_On
-  trigger:
-    entity_id: light.lounge
-    platform: state
-    to: 'on'
-  action:
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
-#        payload: '25388'
-        payload: '64512'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
-        payload: '65535'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
-#        payload: '25388'
-        payload: '64512'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
-        payload: '65535'
-- alias: Lounge_Off
-  trigger:
-    entity_id: light.lounge
-    platform: state
-    to: 'off'
-  action:
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
-        payload: '65535'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
-        payload: '0'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
-        payload: '65535'
-    - service: mqtt.publish
-      data:
-        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
-        payload: '0'
+#- alias: Lounge_On
+#  trigger:
+#    entity_id: light.lounge
+#    platform: state
+#    to: 'on'
+#  action:
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
+##        payload: '25388'
+#        payload: '64512'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
+#        payload: '65535'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
+##        payload: '25388'
+#        payload: '64512'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
+#        payload: '65535'
+#- alias: Lounge_Off
+#  trigger:
+#    entity_id: light.lounge
+#    platform: state
+#    to: 'off'
+#  action:
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].bco'
+#        payload: '65535'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[2].b[4].pco'
+#        payload: '0'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].bco'
+#        payload: '65535'
+#    - service: mqtt.publish
+#      data:
+#        topic: 'homeassistant/haswitchplate/HASwitchPlate/command/p[4].b[4].pco'
+#        payload: '0'

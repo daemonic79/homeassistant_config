@@ -1,11 +1,11 @@
-sensor.total_rain:
-  icon: mdi:weather-rainy
-sensor.wind_speed:
-  icon: mdi:weather-windy
-sensor.wind_gusts:
-  icon: mdi:weather-windy
-sensor.wind_direction:
-  icon: mdi:compass
+#sensor.total_rain:
+#  icon: mdi:weather-rainy
+#sensor.wind_speed:
+#  icon: mdi:weather-windy
+#sensor.wind_gusts:
+#  icon: mdi:weather-windy
+#sensor.wind_direction:
+#  icon: mdi:compass
 sensor.owm_condition:
   icon: mdi:weather-snowy-rainy
 sensor.owm_wind_bearing:

@@ -1,0 +1,12 @@
+- platform: mqtt
+  name: "Master Bedroom"
+  state_topic: "stat/sonoff/RESULT"
+  value_template: '{{ value_json["POWER"] }}'
+  command_topic: "cmnd/sonoff/POWER"
+  availability_topic: "tele/sonoff/LWT"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+  payload_available: "Online"
+  payload_not_available: "Offline"
+  retain: true

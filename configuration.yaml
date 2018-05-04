@@ -258,11 +258,12 @@ http:
   # Uncomment this to add a password (recommended!)
   api_password: !secret http_api_password
   # Uncomment this if you are using SSL or running in Docker etc
-  #base_url: !secret http_base_url
-  #ip_ban_enabled: true
-  #login_attempts_threshold: 5
-  #ssl_certificate: !secret http_sslcert
-  #ssl_key: !secret http_sslkey
+  server_port: !secret http_server_port
+  base_url: !secret http_base_url
+  ssl_certificate: !secret http_sslcert
+  ssl_key: !secret http_sslkey
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
 
 # Checks for available updates
 updater:
@@ -291,14 +292,34 @@ sun:
 tts:
   platform: google
 
-emulated_hue:
-  type: google_home # google_home|alexa
-  host_ip: !secret emulated_hue_host_ip
-  listen_port: 80 # 80:8300
-  expose_by_default: true
+#emulated_hue:
+#  type: google_home # google_home|alexa
+#  host_ip: !secret emulated_hue_host_ip
+#  listen_port: 80 # 80:8300
+#  expose_by_default: true
+#  exposed_domains:
+#    - light
+#    - switch
+
+google_assistant:
+  project_id: !secret google_assistant_project_id
+  client_id: !secret google_assistant_client_id
+  access_token: !secret google_assistant_access_token
+  agent_user_id: !secret google_assistant_agent_user_id
+  api_key: !secret google_assistant_api_key
   exposed_domains:
-    - light
     - switch
+    - light
+#    - group
+#  entity_config:
+#    switch.kitchen:
+#      name: Custom Name for Google Assistant
+#      aliases:
+#        - bright lights
+#        - entry lights
+#    light.living_room:
+#      expose: false
+#      room: living room
 
 device_tracker:
 #  - platform: gpslogger
@@ -364,12 +385,12 @@ weather:
     api_key: !secret sensor_metoffice_api_key
 
 input_number:
-  lounge_floor_animation_speed:
-    name: Lounge Floor Animation Speed
-    initial: 150
-    min: 1
-    max: 150
-    step: 10
+#  lounge_floor_animation_speed:
+#    name: Lounge Floor Animation Speed
+#    initial: 150
+#    min: 1
+#    max: 150
+#    step: 10
 #1 - Init
 #2 - Home
 #3 - 4 Buttons

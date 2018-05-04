@@ -6,12 +6,12 @@ family_group:
     - device_tracker.rob_nexus_6
     - device_tracker.kirst_nexus_6p
 
-lounge_lights_group:
-  name: Lounge Lights
-  view: no
-  entities:
-    - light.lounge
-    - light.lounge_floor
+#lounge_lights_group:
+#  name: Lounge Lights
+#  view: no
+#  entities:
+#    - light.lounge
+#    - light.lounge_floor
 
 sun_group:
   name: Sun
@@ -100,7 +100,7 @@ temperature_group:
   name: Temperature
   view: no
   entities:
-    - sensor.temperature
+#    - sensor.temperature
     - sensor.dark_sky_temperature
     - sensor.dark_sky_apparent_temperature
     - sensor.met_office_temperature
@@ -112,7 +112,7 @@ rain_group:
   name: Rain
   view: no
   entities:
-    - sensor.total_rain
+#    - sensor.total_rain
     - sensor.dark_sky_precip_probability
     - sensor.met_office_probability_of_precipitation
     - sensor.owm_rain
@@ -122,7 +122,7 @@ humidity_group:
   name: Humidity
   view: no
   entities:
-    - sensor.humidity
+#    - sensor.humidity
     - sensor.dark_sky_humidity
     - sensor.met_office_humidity
     - sensor.owm_humidity
@@ -132,9 +132,9 @@ wind_group:
   name: Wind
   view: no
   entities:
-    - sensor.wind_direction
-    - sensor.wind_speed
-    - sensor.wind_gusts
+#    - sensor.wind_direction
+#    - sensor.wind_speed
+#    - sensor.wind_gusts
     - sensor.dark_sky_wind_bearing
     - sensor.dark_sky_wind_speed
     - sensor.met_office_wind_direction
@@ -145,8 +145,8 @@ wind_group:
     - sensor.yr_wind_direction
     - sensor.yr_wind_speed
 
-movies_group:
-  name: Movies
-  entities:
-    - scene.movies
-    - switch.movies
+#movies_group:
+#  name: Movies
+#  entities:
+#    - scene.movies
+#    - switch.movies
